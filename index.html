@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <title>Flask</title>
+    <style>
+        .Done{
+    padding:10px
+    margin:150px
+}
+.c1{
+    display: flex;
+    flex-direction: row;
+}
+    </style>
+</head>
+<body>
+<link rel="stylesheet" href="style.css">
+<h1>Yellow color detector</h1>
+<div class="c1">
+<div>
+  <img src = "{{ url_for('video') }}" width="90%" />
+</div>
+<div class = "Code">
+    <h3>Scouce code: </h3>
+    <code>
+        from flask import Flask , render_template, Response<br>
+        import cv2<br>
+        from util_for_color import get_limits<br>
+        from PIL import Image<br>
+
+        app = Flask(__name__, template_folder='../FDIP_Lab_MiniProject')<br>
+
+        camera = cv2.VideoCapture(0)<br>
+        yellow = [255, 255,0]<br>
+        def generate_frame():<br>
+            &emsp;ue:<br>
+                &emsp;succecc, frame = camera.read()<br>
+                &emsp;hsv_image = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)<br>
+
+                &emsp;lower_limit, upper_limit = get_limits(yellow)<br>
+
+                &emsp;mask = cv2.inRange(hsv_image, lower_limit, upper_limit)<br>
+
+                &emsp;mask_ = Image.fromarray(mask)<br>
+
+                &emsp;bbox = mask_.getbbox()<br>
+
+                &emsp;if bbox is not None:<br>
+                    &emsp;&emsp;x1, x2, y1, y2 = bbox<br>
+                    &emsp;&emsp;frame = cv2.rectangle(frame, (x1, x2), (y1, y2), (0, 255, 0), 5)<br>
+
+                &emsp;cv2.imshow('mask', mask)<br>
+                &emsp;cv2.imshow('frame', frame)<br>
+
+                &emsp;aitKey(1) & 0xFF == ord('q'):<br>
+                    &emsp;&emsp;break<br>
+
+                &emsp;uccecc:<br>
+                    &emsp;&emsp;break;<br>
+                &emsp;else:<br>
+                    &emsp;&emsp;ret, buffer = cv2.imencode('.jpg',frame)<br>
+                    &emsp;&emsp;frame = buffer.tobytes()<br>
+
+                    &emsp;&emsp;'--frame\r\n'<br>
+                           &emsp; &emsp;b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')<br>
+
+        @app.route('/')<br>
+        def index():<br>
+            &emsp;ender_template('index.html')<br>
+
+        @app.route('/video')<br>
+        def video():<br>
+            &emsp;esponse(generate_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')<br>
+
+
+        if __name__ == "__main__":<br>
+            &emsp;app.run(debug=True)<br>
+            </code>
+
+</div>
+</div>
+</body>
+</html>
